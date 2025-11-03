@@ -8,7 +8,7 @@ import { message, notification } from "antd";
 import "@ant-design/v5-patch-for-react-19";
 // import { useSelector } from "react-redux";
 
-export const wsMiddleware: Middleware<{}> = (store) => {
+export const wsMiddleware: Middleware<unknown> = (store) => {
   let socket: WebSocket | null = null;
   let reconnectTimeout: ReturnType<typeof setTimeout> | null = null; // 重连定时器
   //从redux获取id
@@ -46,7 +46,9 @@ export const wsMiddleware: Middleware<{}> = (store) => {
 
         //这个12到时候也得从redux获取
         console.log(msg);
-        const currentUserId = JSON.parse(localStorage.getItem("user")).id;
+        const currentUserId = JSON.parse(
+          localStorage.getItem("user") || "{}",
+        )?.id;
 
         if (msg.data.data[0].receiverId === currentUserId) {
           if (!msg.type) throw new Error("消息缺少type字段");

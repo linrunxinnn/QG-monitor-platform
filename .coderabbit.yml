@@ -1,0 +1,38 @@
+# .coderabbit.yml
+# CodeRabbit 配置示例
+
+version: 1
+review:
+  enable: true                # 启用 CodeRabbit 自动审查
+  mode: auto                  # auto=PR创建即触发；manual=手动触发
+  languages:                  # 指定代码语言
+    - javascript
+    - typescript
+    - markdown
+    - html
+    - css
+  reviewers:                  # AI 会模拟的“虚拟审查角色”
+    - name: Code Quality Bot
+      focus:
+        - readability
+        - maintainability
+        - best_practices
+    - name: Security Advisor
+      focus:
+        - security
+        - data_validation
+  ignore_paths:               # 忽略的目录
+    - node_modules
+    - dist
+    - build
+    - coverage
+  rules:
+    max_comments: 30          # 每次审查最多评论条数
+    min_severity: medium      # 忽略低危警告
+    summarize: true           # 是否生成总结评论
+  command_triggers:           # 允许在评论中触发命令
+    - "@coderabbitai review"
+    - "@coderabbitai full review"
+  output:
+    comment_on_pr: true       # 评论出现在 PR 页面
+    request_changes: false    # 不自动要求改动（仅建议）

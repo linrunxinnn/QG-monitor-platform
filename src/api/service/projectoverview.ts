@@ -1,14 +1,18 @@
 import apiClient from "../index";
 
 // 私有项目获取函数
-export const getPrivateProjects = async (userId: string | number) => {
+export const getPrivateProjects = async (userId: string | number | null) => {
   try {
+    if (!userId) {
+      console.error("用户ID为空");
+      return [];
+    }
     const response = await apiClient.get("projects/getPersonalProject", {
       params: { userId },
     });
     console.log("Private projects response:", response);
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching private projects:", error);
   }
 };
@@ -19,7 +23,7 @@ export const getPublicProjects = async () => {
     const response = await apiClient.get("/projects/getPublicProjectList");
     console.log("Public projects response:", response);
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching public projects:", error);
   }
 };
@@ -27,7 +31,7 @@ export const getPublicProjects = async () => {
 //获取用户在项目中的权限
 export const getUserResponsibility = async (
   projectId: string,
-  userId: number | string
+  userId: number | string | null,
 ) => {
   const response = await apiClient.get("/roles/getRole", {
     params: { projectId, userId },
@@ -91,7 +95,7 @@ export const deleteProjectAPI = async (projectId: string) => {
 //退出项目
 export const exitProjectAPI = async (
   projectId: string,
-  userId: string | number
+  userId: string | number,
 ) => {
   try {
     const response = await apiClient.delete(`/roles`, {
@@ -110,7 +114,7 @@ export const exitProjectAPI = async (
 //todo踢除用户
 export const kickUserAPI = async (
   projectId: string,
-  userId: string | number
+  userId: string | number,
 ) => {
   try {
     const response = await apiClient.delete(`/api/project/kickUser`, {
@@ -128,7 +132,7 @@ export const changeUserLevelAPI = async (
   currentUserId: string | number,
   projectId: string,
   userId: string | number,
-  newRole: string | number
+  newRole: string | number,
 ) => {
   try {
     const response = await apiClient.put(`/roles`, {

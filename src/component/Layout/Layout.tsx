@@ -1,16 +1,7 @@
-import {
-  Layout,
-  Menu,
-  theme,
-  Dropdown,
-  Button,
-  message,
-  FloatButton,
-} from "antd";
+import { Layout, Menu, theme, message, FloatButton } from "antd";
 import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./Layout.module.css";
 import {
-  DownOutlined,
   ProjectOutlined,
   MessageOutlined,
   SettingOutlined,
@@ -25,13 +16,10 @@ import {
   CheckCircleOutlined,
   AlertOutlined,
   RobotOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import { useLocation, useNavigate, Outlet, useMatches } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { fetchUserInfo } from "../../store/slice/userSlice";
-import { decryptWithAESAndRSA } from "../../utils/encrypt";
+import { fetchUserInfo, type User } from "../../store/slice/userSlice";
 import {
   getPrivateProjects,
   getPublicProjects,
@@ -50,14 +38,12 @@ const AppLayout = () => {
   const [thirdLevelKey, setThirdLevelKey] = useState("overview");
   const [openKeys, setOpenKeys] = useState(["all-projects", "public-projects"]);
   const dispatch = useDispatch();
-  const [privateProjects, setPrivateProjects] = useState([]);
+  const [privateProjects, setPrivateProjects] = useState<unknown>([]);
   const [publicProjects, setPublicProjects] = useState([]);
   const [chatVisible, setChatVisible] = useState(false);
   const [showChatButton, setShowChatButton] = useState(false);
   const matches = useMatches();
-  const [user, setUser] = useState<any>(
-    JSON.parse(localStorage.getItem("user"))
-  );
+  const [user] = useState<User>(JSON.parse(localStorage.getItem("user") || ""));
 
   const [projectRefreshToken, setProjectRefreshToken] = useState(0);
 
@@ -74,6 +60,7 @@ const AppLayout = () => {
         setPublicProjects(publicProject.reverse());
       } catch (error) {
         message.info("获取项目列表失败");
+        console.error(error);
       }
     };
     fetchData();
@@ -97,7 +84,7 @@ const AppLayout = () => {
       try {
         // console.log(user.id);
 
-        dispatch(fetchUserInfo(user.id));
+        dispatch(fetchUserInfo(user.id) as any);
         const privateProject = await getPrivateProjects(user.id);
         const publicProject = await getPublicProjects();
         if (privateProject) {
@@ -108,15 +95,16 @@ const AppLayout = () => {
         }
       } catch (error) {
         message.error("获取项目列表失败");
+        console.error(error);
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, user?.id]);
 
   useEffect(() => {
     // 检查路由层级，如果路径包含项目详情相关路径则显示聊天按钮
     const isProjectDetailPage = matches.some((match) =>
-      match.pathname.includes("/detail/")
+      match.pathname.includes("/detail/"),
     );
     setShowChatButton(isProjectDetailPage);
   }, [matches]);
@@ -165,16 +153,16 @@ const AppLayout = () => {
 
         // 查找项目属于私有还是公共，设置正确的key
         const isPrivateProject = privateProjects.some(
-          (project) => project.uuid == projectId
+          (project) => project.uuid == projectId,
         );
         const isPublicProject = publicProjects.some(
-          (project) => project.uuid == projectId
+          (project) => project.uuid == projectId,
         );
 
         // 如果在两个列表中都存在，优先使用sessionStorage中记录的来源
         if (isPrivateProject && isPublicProject) {
           const projectSource = sessionStorage.getItem(
-            `project-source-${projectId}`
+            `project-source-${projectId}`,
           );
           if (projectSource === "public") {
             setSecondLevelKey(`public-${projectId}`);
