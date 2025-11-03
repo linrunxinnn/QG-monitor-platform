@@ -1,8 +1,12 @@
 import apiClient from "../index";
 
 // 私有项目获取函数
-export const getPrivateProjects = async (userId: string | number) => {
+export const getPrivateProjects = async (userId: string | number | null) => {
   try {
+    if (!userId) {
+      console.error("用户ID为空");
+      return [];
+    }
     const response = await apiClient.get("projects/getPersonalProject", {
       params: { userId },
     });

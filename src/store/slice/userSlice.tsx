@@ -44,7 +44,7 @@ MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC1AZj7Ik201dBfzZ9eP3rJCsdt9Hy7
 // 异步获取用户信息的 thunk
 export const fetchUserInfo = createAsyncThunk(
   "user/fetchUserInfo",
-  async (userId: number) => {
+  async (userId: number | string | null) => {
     // 调用 API 获取用户信息
     const response = await getUserInfoAPI(userId);
     const decryptedData = decryptWithAESAndRSA(

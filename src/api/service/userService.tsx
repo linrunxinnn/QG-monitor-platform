@@ -64,7 +64,7 @@ export const deleteUserAPI = async () => {
 };
 
 //刷新的时候获取用户信息
-export const getUserInfoAPI = async (id: number) => {
+export const getUserInfoAPI = async (id: number | string | null) => {
   const response = await apiClient.get(`users/${id}`);
   //对返回的数据进行解密
   return response;
